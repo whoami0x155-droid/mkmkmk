@@ -1,7 +1,6 @@
 name: Run Qureo Solver Bot
 
 on:
-  # لتمكين التشغيل اليدوي من تبويب Actions في GitHub
   workflow_dispatch:
     inputs:
       student_id:
@@ -17,37 +16,27 @@ on:
         required: true
         default: '7-25'
         type: string
-      language:
-        description: 'لغة البرمجة المطلوب حلها'
-        required: true
-        default: 'all'
+      course:
+        description: 'الكورس (python أو javascript)'
+        required: false
         type: choice
         options:
           - 'python'
           - 'javascript'
-          - 'all'
-      count:
-        description: 'عدد الأسئلة/المهمات (اكتب all للكل أو أدخل رقماً محدداً)'
-        required: true
-        default: 'all'
-        type: string
 
 jobs:
   solve:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. جلب كود المشروع من GitHub
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. إعداد بيئة Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # 3. تثبيت المتطلبات و Playwright
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -55,12 +44,14 @@ jobs:
           pip install playwright
           python -m playwright install chromium --with-deps
 
-      # 4. تشغيل السكربت بالبيانات والإعدادات المحددة
       - name: Run Qureo Solver
         run: |
-          python qureo_solver.py solve \
-            --id "${{ github.event.inputs.student_id }}" \
-            --pass "${{ github.event.inputs.password }}" \
-            --chapters "${{ github.event.inputs.chapters }}" \
-            --lang "${{ github.event.inputs.language }}" \
-            --count "${{ github.event.inputs.count }}"
+          # تجهيز الأمر الأساسي
+          CMD="python qureo_solver.py solve --id '${{ github.event.inputs.student_id }}' --pass '${{ github.event.inputs.password }}' --chapters '${{ github.event.inputs.chapters }}'"
+          
+          # إضافة شرط الكورس في حال تم اختياره
+          if [ -n "${{ github.event.inputs.course }}" ]; then
+            CMD="$CMD --course ${{ github.event.inputs.course }}"
+          fi
+          
+          eval $CMD
