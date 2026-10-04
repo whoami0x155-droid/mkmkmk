@@ -30,17 +30,17 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Connect Tailscale & Route via Egypt Exit Node
+      - name: Connect Tailscale & Route Traffic via Egypt Exit Node
         uses: tailscale/github-action@v2
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
-          args: --exit-node=motaz-eldaba-ninja0x --exit-node-allow-lan-access
+          args: --exit-node=100.96.204.126 --exit-node-allow-lan-access
 
       - name: Verify Connection IP & Location
         run: |
-          echo "=== معلومات الـ IP الحالية ==="
+          echo "=== معلومات الـ IP والبلد بعد الاتصال ==="
           curl -s https://ipinfo.io/json
 
       - name: Run Qureo Solver Script
