@@ -33,9 +33,10 @@ jobs:
       - name: Connect Tailscale & Route via Egypt Exit Node
         uses: tailscale/github-action@v2
         with:
-          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-          # اكتب اسم جهازك اللي في مصر الظاهر في لوحة Tailscale
-          exit-node: "motaz-eldaba-ninja0x"
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          args: --exit-node=motaz-eldaba-ninja0x --exit-node-allow-lan-access
 
       - name: Verify Connection IP & Location
         run: |
