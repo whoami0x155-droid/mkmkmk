@@ -17,6 +17,20 @@ on:
         required: true
         default: '7-25'
         type: string
+      language:
+        description: 'لغة البرمجة المطلوب حلها'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - 'python'
+          - 'javascript'
+          - 'all'
+      count:
+        description: 'عدد الأسئلة/المهمات (اكتب all للكل أو أدخل رقماً محدداً)'
+        required: true
+        default: 'all'
+        type: string
 
 jobs:
   solve:
@@ -41,7 +55,12 @@ jobs:
           pip install playwright
           python -m playwright install chromium --with-deps
 
-      # 4. تشغيل السكربت بالبيانات المحددة
+      # 4. تشغيل السكربت بالبيانات والإعدادات المحددة
       - name: Run Qureo Solver
         run: |
-          python qureo_solver.py solve --id "${{ github.event.inputs.student_id }}" --pass "${{ github.event.inputs.password }}" --chapters "${{ github.event.inputs.chapters }}"
+          python qureo_solver.py solve \
+            --id "${{ github.event.inputs.student_id }}" \
+            --pass "${{ github.event.inputs.password }}" \
+            --chapters "${{ github.event.inputs.chapters }}" \
+            --lang "${{ github.event.inputs.language }}" \
+            --count "${{ github.event.inputs.count }}"
