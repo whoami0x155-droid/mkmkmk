@@ -1,4 +1,4 @@
-name: Qureo Solver (Egypt VPN)
+name: Qureo Solver (Tailscale Egypt VPN)
 
 on:
   workflow_dispatch:
@@ -30,27 +30,12 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Install System Packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openvpn curl
-
-      - name: Connect to Egypt VPN via VPN Gate
-        run: |
-          # 1. جلب ملف إعدادات سيرفر مصري مجاني من VPN Gate
-          curl -s "https://www.vpngate.net/api/iphone/" | grep ",EG," | head -n 1 | cut -d',' -f15 | base64 -d > egypt.ovpn
-
-          # 2. التحقق من نجاح الحصول على السيرفر
-          if [ ! -s egypt.ovpn ]; then
-            echo "خطأ: لم يتم العثور على سيرفر مصري متاًح حالياً على VPN Gate."
-            exit 1
-          fi
-
-          # 3. تشغيل الـ VPN في الخلفية
-          sudo openvpn --config egypt.ovpn --daemon
-
-          # 4. الانتظار 10 ثوانٍ لضمان اكتمال الاتصال
-          sleep 10
+      - name: Connect Tailscale & Route via Egypt Exit Node
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          # اكتب اسم جهازك اللي في مصر الظاهر في لوحة Tailscale
+          exit-node: "motaz-eldaba-ninja0x"
 
       - name: Verify Connection IP & Location
         run: |
