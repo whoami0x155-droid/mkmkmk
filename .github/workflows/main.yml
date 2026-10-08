@@ -16,12 +16,12 @@ jobs:
       with:
         python-version: '3.10'
 
-    # تثبيت وربط Tailscale مع استخدام جهازك كـ Exit Node عبر الـ args
+    # ربط Tailscale مع استخدام الاسم الكامل لجهازك كـ Exit Node
     - name: Connect to Tailscale
       uses: tailscale/github-action@v2
       with:
         authkey: ${{ secrets.TS_AUTH_KEY }}
-        args: "--exit-node=ninja0x"
+        args: "--exit-node=ninja0x.tail02285a.ts.net"
 
     - name: Test IP and Connection
       run: |
